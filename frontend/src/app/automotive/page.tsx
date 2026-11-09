@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import { type FormEvent, useCallback, useEffect, useState } from "react";
@@ -26,14 +27,64 @@ import {
 } from "@/lib/automotive";
 
 const categories = [
-  { label: "All Vehicles", bodyType: "", fuelType: "", icon: CarFront },
-  { label: "Luxury Cars", bodyType: "SEDAN", fuelType: "", icon: BadgeCheck },
-  { label: "SUVs & 4WD", bodyType: "SUV", fuelType: "", icon: Gauge },
-  { label: "Electric Vehicles", bodyType: "", fuelType: "ELECTRIC", icon: ArrowUpRight },
-  { label: "Commercial Vehicles", bodyType: "TRUCK", fuelType: "", icon: MapPin },
+  {
+    label: "All Vehicles",
+    bodyType: "",
+    fuelType: "",
+    icon: CarFront,
+    image: "/danza-categories/all-vehicles.jpg",
+    imageAlt: "Showcase image for all vehicle types",
+    imagePosition: "object-center",
+  },
+  {
+    label: "Luxury Cars",
+    bodyType: "SEDAN",
+    fuelType: "",
+    icon: BadgeCheck,
+    image: "/danza-categories/luxury-cars.jpg",
+    imageAlt: "Showcase image for luxury sedans",
+    imagePosition: "object-center",
+  },
+  {
+    label: "SUVs & 4WD",
+    bodyType: "SUV",
+    fuelType: "",
+    icon: Gauge,
+    image: "/danza-categories/suv-4wd.jpg",
+    imageAlt: "Showcase image for SUVs and 4WDs",
+    imagePosition: "object-center",
+  },
+  {
+    label: "Electric Vehicles",
+    bodyType: "",
+    fuelType: "ELECTRIC",
+    icon: ArrowUpRight,
+    image: "/danza-categories/electric-vehicles.jpg",
+    imageAlt: "Showcase image for electric vehicles",
+    imagePosition: "object-center",
+  },
+  {
+    label: "Commercial Vehicles",
+    bodyType: "TRUCK",
+    fuelType: "",
+    icon: MapPin,
+    image: "/danza-categories/commercial-vehicles.jpg",
+    imageAlt: "Showcase image for commercial vehicles",
+    imagePosition: "object-center",
+  },
 ];
 
 const emptyFilters: VehicleFilters = {};
+
+const VehicleOrbitViewer = dynamic(
+  () => import("@/components/automotive/VehicleOrbitViewer"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="aspect-[4/3] animate-pulse rounded-3xl bg-white/[0.04]" />
+    ),
+  },
+);
 
 function VehicleCard({
   vehicle,
@@ -212,6 +263,7 @@ export default function AutomotivePage() {
   const saleValue = Number(saleAmount);
   const commission = Number.isFinite(saleValue) && saleValue > 0 ? saleValue * 0.01 : 0;
   const netAmount = Number.isFinite(saleValue) && saleValue > 0 ? saleValue - commission : 0;
+  const hasActiveFilters = Object.values(filters).some(Boolean);
   const money = (amount: number) =>
     `${new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(amount)} MMK`;
 
@@ -410,17 +462,44 @@ export default function AutomotivePage() {
           </button>
         </div>
 
-        <div className="mb-8 flex flex-wrap gap-2">
-          {categories.map(({ label, bodyType, fuelType, icon: Icon }) => (
+        <div className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+          {categories.map(
+            ({
+              label,
+              bodyType,
+              fuelType,
+              icon: Icon,
+              image,
+              imageAlt,
+              imagePosition,
+            }) => (
             <button
               key={label}
               type="button"
               onClick={() => chooseCategory(bodyType, fuelType)}
-              className="inline-flex items-center gap-2 rounded-full border border-white/10 px-4 py-2.5 text-[10px] text-slate-300 transition hover:border-amber-300/50 hover:text-white"
+              className="group relative isolate aspect-[4/3] min-h-32 overflow-hidden rounded-2xl border border-white/10 bg-[#111722] text-left transition hover:border-amber-300/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-300"
             >
-              <Icon size={13} /> {label}
+              <Image
+                src={image}
+                alt={imageAlt}
+                fill
+                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                className={`-z-20 object-cover transition duration-700 group-hover:scale-105 ${imagePosition}`}
+              />
+              <span className="absolute inset-0 -z-10 bg-gradient-to-t from-black/90 via-black/20 to-black/5" />
+              <span className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 p-3 sm:p-4">
+                <span className="text-[11px] font-semibold text-white sm:text-xs">
+                  {label}
+                </span>
+                <Icon
+                  size={15}
+                  aria-hidden="true"
+                  className="shrink-0 text-amber-200"
+                />
+              </span>
             </button>
-          ))}
+            ),
+          )}
         </div>
 
         {error && (
@@ -459,13 +538,34 @@ export default function AutomotivePage() {
             </div>
           </>
         ) : !error ? (
-          <div className="rounded-2xl border border-white/10 bg-white/[0.02] px-6 py-16 text-center">
-            <CarFront className="mx-auto text-slate-500" size={30} />
-            <h3 className="mt-4 text-base font-semibold">No vehicles match these filters</h3>
-            <p className="mt-2 text-xs text-slate-500">
-              Try a different search or check back as new vehicles are approved.
-            </p>
-          </div>
+          <>
+            <div className="rounded-2xl border border-white/10 bg-white/[0.02] px-6 py-12 text-center">
+              <CarFront className="mx-auto text-slate-500" size={30} />
+              <h3 className="mt-4 text-base font-semibold">No vehicles match these filters</h3>
+              <p className="mt-2 text-xs text-slate-500">
+                Try a different search or check back as new vehicles are approved.
+              </p>
+            </div>
+            {!hasActiveFilters && (
+              <div className="mt-8 grid items-center gap-6 rounded-3xl border border-white/10 bg-[#0c1118] p-4 sm:p-6 lg:grid-cols-[.65fr_1fr]">
+                <div className="px-2 py-2 sm:px-4">
+                  <p className="text-[9px] tracking-[0.18em] text-amber-200">
+                    DANZA SHOWROOM PREVIEW
+                  </p>
+                  <h3 className="mt-3 text-xl font-semibold text-white sm:text-2xl">
+                    Explore the car from every angle
+                  </h3>
+                  <p className="mt-3 text-xs leading-6 text-slate-400">
+                    Drag to orbit around the placeholder vehicle. Tilt the view
+                    to look above or below, or use pinch and scroll to zoom.
+                    Replace this sample model with a Danza GLB when one is
+                    available.
+                  </p>
+                </div>
+                <VehicleOrbitViewer />
+              </div>
+            )}
+          </>
         ) : null}
 
         {compareMessage && <p role="status" className="mt-5 text-xs text-amber-200">{compareMessage}</p>}

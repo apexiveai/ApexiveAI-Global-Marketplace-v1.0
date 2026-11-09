@@ -14,6 +14,7 @@ import {
   submitVehicleInquiry,
   vehicleImageUrl,
 } from "@/lib/automotive";
+import VehicleOrbitViewer from "@/components/automotive/VehicleOrbitViewer";
 
 type ContactMode = "inquiry" | "test-drive";
 
@@ -150,37 +151,58 @@ function AutomotiveVehicleDetailContent() {
 
       <div className="mt-7 grid gap-10 lg:grid-cols-[1.15fr_.85fr]">
         <div>
-          <div className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-white/10 bg-[#151a22]">
-            <Image
-              src={primaryImage}
-              alt={selectedImage?.alt_text || vehicle.title}
-              fill
-              priority
-              unoptimized
-              className="object-cover"
-            />
-            <span className="absolute left-5 top-5 rounded-full border border-white/15 bg-black/60 px-3 py-2 text-[9px] tracking-[0.15em] text-white backdrop-blur">
-              {spec.availability}
-            </span>
-          </div>
-          {images.length > 1 && (
-            <div className="mt-3 grid grid-cols-4 gap-3 sm:grid-cols-6">
-              {images.map((image, index) => (
-                <button
-                  type="button"
-                  key={image.id}
-                  onClick={() => setActiveImage(index)}
-                  aria-label={`View photo ${index + 1}`}
-                  aria-pressed={activeImage === index}
-                  className={`relative aspect-square overflow-hidden rounded-xl border ${
-                    activeImage === index ? "border-amber-300" : "border-white/10"
-                  }`}
-                >
-                  <Image src={vehicleImageUrl(image.image)} alt={image.alt_text || `${vehicle.title} photo ${index + 1}`} fill unoptimized className="object-cover" />
-                </button>
-              ))}
+          <VehicleOrbitViewer />
+          <div className="mt-7">
+            <p className="mb-3 text-[9px] tracking-[0.18em] text-amber-200">
+              {vehicle.images.length
+                ? "VEHICLE PHOTOS"
+                : vehicle.partner_slug === "danza"
+                  ? "DANZA SHOWROOM PHOTO EXAMPLES"
+                  : "VEHICLE PHOTO"}
+            </p>
+            <div className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-white/10 bg-[#151a22]">
+              <Image
+                src={primaryImage}
+                alt={selectedImage?.alt_text || vehicle.title}
+                fill
+                priority
+                unoptimized
+                className="object-cover"
+              />
+              <span className="absolute left-5 top-5 rounded-full border border-white/15 bg-black/60 px-3 py-2 text-[9px] tracking-[0.15em] text-white backdrop-blur">
+                {spec.availability}
+              </span>
             </div>
-          )}
+            {images.length > 1 && (
+              <div className="mt-3 grid grid-cols-4 gap-3 sm:grid-cols-6">
+                {images.map((image, index) => (
+                  <button
+                    type="button"
+                    key={image.id}
+                    onClick={() => setActiveImage(index)}
+                    aria-label={`View photo ${index + 1}`}
+                    aria-pressed={activeImage === index}
+                    className={`relative aspect-square overflow-hidden rounded-xl border ${
+                      activeImage === index ? "border-amber-300" : "border-white/10"
+                    }`}
+                  >
+                    <Image
+                      src={vehicleImageUrl(image.image)}
+                      alt={image.alt_text || `${vehicle.title} photo ${index + 1}`}
+                      fill
+                      unoptimized
+                      className="object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
+            {!vehicle.images.length && vehicle.partner_slug === "danza" && (
+              <p className="mt-3 text-[10px] leading-5 text-slate-500">
+                These are sample showroom images, not photos of this specific listing.
+              </p>
+            )}
+          </div>
 
           {vehicle.videos.map((video) => (
             <div key={video.id} className="mt-5 overflow-hidden rounded-2xl border border-white/10 bg-black">
