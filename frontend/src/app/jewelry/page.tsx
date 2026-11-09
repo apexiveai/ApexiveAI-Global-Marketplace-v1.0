@@ -1,43 +1,47 @@
-"use client";
-
 import Link from "next/link";
-import { ArrowLeft, Gem, Diamond, Crown } from "lucide-react";
-
-const categories = [
-  { name: "Gold Jewelry", icon: Crown },
-  { name: "Diamond Jewelry", icon: Diamond },
-  { name: "Luxury Collections", icon: Gem },
-];
+import { ArrowRight, ShieldCheck, Sparkles } from "lucide-react";
+import JewelryCategories from "@/components/jewelry/JewelryCategories";
+import JewelryCatalogPage from "@/components/jewelry/JewelryCatalogPage";
+import JewelryHero from "@/components/jewelry/JewelryHero";
 
 export default function JewelryPage() {
   return (
-    <main className="min-h-screen bg-[#08090d] text-white px-6 py-10">
-      <div className="mx-auto max-w-7xl">
-        <Link href="/" className="inline-flex items-center gap-2 text-gray-400 hover:text-white">
-          <ArrowLeft size={18} /> Back to Home
-        </Link>
-
-        <section className="py-20">
-          <p className="text-amber-400 tracking-[0.3em] text-sm">
-            APEXIVEAI LUXURY COLLECTION
-          </p>
-          <h1 className="mt-5 text-5xl md:text-7xl font-bold">
-            Jewelry<span className="text-amber-400">.</span>
-          </h1>
-          <p className="mt-5 max-w-xl text-gray-400 text-lg">
-            Explore fine gold, diamonds and exclusive jewelry collections.
-          </p>
-        </section>
-
-        <div className="grid gap-5 md:grid-cols-3">
-          {categories.map(({ name, icon: Icon }) => (
-            <div key={name} className="rounded-2xl border border-white/10 bg-white/[0.04] p-8 hover:border-amber-400/50 transition">
-              <Icon size={32} className="text-amber-400" />
-              <h2 className="mt-6 text-xl font-semibold">{name}</h2>
-            </div>
-          ))}
-        </div>
+    <main className="min-h-screen bg-[#08090d] text-white">
+      <JewelryHero />
+      <div className="market-container">
+        <JewelryCategories />
       </div>
+      <JewelryCatalogPage
+        collection="featured"
+        title="Featured pieces"
+        description="A selection of standout jewelry from marketplace sellers."
+        showFilters={false}
+        limit={4}
+      />
+      <section className="market-container grid gap-4 pb-16 sm:grid-cols-2">
+        <div className="rounded-2xl border border-white/10 bg-[#10141b] p-6">
+          <ShieldCheck size={20} className="text-amber-200" />
+          <h2 className="mt-4 text-base font-semibold">Shop with clarity</h2>
+          <p className="mt-2 text-xs leading-5 text-slate-400">
+            Review materials, specifications, and seller details on every
+            available product listing.
+          </p>
+        </div>
+        <div className="rounded-2xl border border-white/10 bg-[#10141b] p-6">
+          <Sparkles size={20} className="text-amber-200" />
+          <h2 className="mt-4 text-base font-semibold">Make it personal</h2>
+          <p className="mt-2 text-xs leading-5 text-slate-400">
+            Looking for a custom piece? Find a seller and discuss your idea
+            directly.
+          </p>
+          <Link
+            href="/jewelry/custom"
+            className="mt-4 inline-flex items-center gap-2 text-xs text-amber-200 hover:text-white"
+          >
+            Explore custom jewelry <ArrowRight size={13} />
+          </Link>
+        </div>
+      </section>
     </main>
   );
 }

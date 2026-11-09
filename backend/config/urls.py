@@ -50,5 +50,5 @@ urlpatterns = [
     ),
     path("api/v1/media/", include("apps.media.urls")),
     path("api/v1/catalog/", include("apps.catalog.urls")),
+    path("api/v1/", include("apps.automotive.urls")),
 ]
-

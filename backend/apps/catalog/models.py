@@ -59,6 +59,7 @@ class Category(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
+        self.full_clean()
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -190,6 +191,7 @@ class Product(models.Model):
         if not self.slug:
             self.slug = slugify(self.title)
 
+        self.full_clean()
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -239,6 +241,10 @@ class ProductImage(models.Model):
                 product_id=self.product_id,
                 is_primary=True,
             ).exclude(pk=self.pk).update(is_primary=False)
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Image for {self.product.title}"

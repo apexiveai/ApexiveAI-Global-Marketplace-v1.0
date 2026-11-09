@@ -36,6 +36,10 @@ class ProductViewSet(viewsets.ModelViewSet):
         queryset = Product.objects.select_related(
             "seller",
             "category",
+        ).prefetch_related(
+            "images",
+            "jewelry_specification",
+            "videos",
         )
 
         user = self.request.user

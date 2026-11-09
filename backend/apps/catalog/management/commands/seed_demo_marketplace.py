@@ -53,6 +53,17 @@ class Command(BaseCommand):
         with transaction.atomic():
             self.approve_seller(jewelry_seller, admin)
             self.approve_seller(auto_seller, admin)
+            from apps.automotive.models import AutomotivePartnerProfile
+
+            AutomotivePartnerProfile.objects.get_or_create(
+                user=auto_seller,
+                defaults={
+                    "slug": "danza",
+                    "display_name": "Danza Car Showroom",
+                    "tagline": "Premium Partner Showroom",
+                    "is_official_partner": True,
+                },
+            )
 
             jewelry_product = self.create_jewelry_product(
                 jewelry_seller
@@ -107,7 +118,7 @@ class Command(BaseCommand):
                 "business_name": (
                     "ApexiveAI Demo Jewelry Store"
                     if seller.business_type == "JEWELRY"
-                    else "ApexiveAI Demo Auto Showroom"
+                    else "Danza Car Showroom"
                 ),
                 "legal_name": "",
                 "country": "MM",

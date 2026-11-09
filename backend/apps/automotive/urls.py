@@ -1,0 +1,97 @@
+from django.urls import path
+
+from .views import (
+    AutomotiveAdminDashboardView,
+    AutomotiveInquiryStatusView,
+    AutomotiveTestDriveStatusView,
+    CommissionLedgerView,
+    CommissionRecordView,
+    CommissionSettlementListView,
+    CommissionSettlementView,
+    PartnerDetailView,
+    PartnerInquiryListCreateView,
+    PartnerTestDriveListCreateView,
+    VehicleDetailView,
+    VehicleInquiryListCreateView,
+    VehicleListView,
+    VehicleTestDriveListCreateView,
+)
+
+urlpatterns = [
+    path("automotive/vehicles/", VehicleListView.as_view(), name="automotive-vehicles"),
+    path(
+        "automotive/vehicles/<uuid:vehicle_id>/",
+        VehicleDetailView.as_view(),
+        name="automotive-vehicle-detail",
+    ),
+    path(
+        "automotive/vehicles/<uuid:vehicle_id>/inquiries/",
+        VehicleInquiryListCreateView.as_view(),
+        name="automotive-vehicle-inquiries",
+    ),
+    path(
+        "automotive/vehicles/<uuid:vehicle_id>/test-drives/",
+        VehicleTestDriveListCreateView.as_view(),
+        name="automotive-vehicle-test-drives",
+    ),
+    path(
+        "partners/<slug:partner_slug>/",
+        PartnerDetailView.as_view(),
+        name="automotive-partner",
+    ),
+    path(
+        "partners/<slug:partner_slug>/vehicles/",
+        VehicleListView.as_view(),
+        name="partner-vehicles",
+    ),
+    path(
+        "partners/<slug:partner_slug>/vehicles/<uuid:vehicle_id>/",
+        VehicleDetailView.as_view(),
+        name="partner-vehicle-detail",
+    ),
+    path(
+        "partners/<slug:partner_slug>/inquiries/",
+        PartnerInquiryListCreateView.as_view(),
+        name="partner-inquiries",
+    ),
+    path(
+        "partners/<slug:partner_slug>/inquiries/<int:inquiry_id>/",
+        AutomotiveInquiryStatusView.as_view(),
+        name="partner-inquiry-status",
+    ),
+    path(
+        "partners/<slug:partner_slug>/test-drives/",
+        PartnerTestDriveListCreateView.as_view(),
+        name="partner-test-drives",
+    ),
+    path(
+        "partners/<slug:partner_slug>/test-drives/<int:request_id>/",
+        AutomotiveTestDriveStatusView.as_view(),
+        name="partner-test-drive-status",
+    ),
+    path(
+        "commissions/",
+        CommissionRecordView.as_view(),
+        name="automotive-commission-record",
+    ),
+    path(
+        "commissions/ledger/",
+        CommissionLedgerView.as_view(),
+        name="automotive-commission-ledger",
+    ),
+    path(
+        "commissions/settlements/",
+        CommissionSettlementListView.as_view(),
+        name="automotive-commission-settlements",
+    ),
+    path(
+        "commissions/<int:commission_id>/settle/",
+        CommissionSettlementView.as_view(),
+        name="automotive-commission-settle",
+    ),
+    path(
+        "admin/<slug:partner_slug>/dashboard/",
+        AutomotiveAdminDashboardView.as_view(),
+        name="automotive-admin-dashboard",
+    ),
+]

@@ -3,6 +3,8 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
+import Link from "next/link";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -125,7 +127,7 @@ export default function HomePage() {
       {/* Navigation */}
       <header className="sticky top-0 z-50 border-b border-white/[0.07] bg-[#080b11]/90 backdrop-blur-2xl">
         <div className="market-container flex h-[76px] items-center justify-between">
-          <a href="/" className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-sky-400/30 bg-sky-400/10">
               <span className="text-xl font-black text-sky-300">A</span>
             </div>
@@ -137,7 +139,7 @@ export default function HomePage() {
                 GLOBAL MARKETPLACE
               </div>
             </div>
-          </a>
+          </Link>
 
           <nav className="hidden items-center gap-9 text-xs font-medium text-slate-400 lg:flex">
             <a href="#collections" className="transition hover:text-white">
@@ -632,7 +634,7 @@ export default function HomePage() {
       <footer className="border-t border-white/[0.08] bg-[#080b11]">
         <div className="market-container grid gap-12 py-14 md:grid-cols-[1.5fr_1fr_1fr_1fr]">
           <div>
-            <a href="/" className="inline-flex items-center gap-3">
+            <Link href="/" className="inline-flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-sky-400/30 bg-sky-400/10 text-xl font-black text-sky-300">
                 A
               </div>
@@ -644,7 +646,7 @@ export default function HomePage() {
                   GLOBAL MARKETPLACE
                 </div>
               </div>
-            </a>
+            </Link>
             <p className="mt-5 max-w-xs text-xs leading-7 text-slate-500">
               A modern destination for electronics, fine jewelry and
               automotive discoveries.
@@ -704,8 +706,15 @@ export default function HomePage() {
         </div>
 
         <div className="border-t border-white/[0.07]">
-          <div className="market-container flex flex-col justify-between gap-3 py-6 text-[10px] text-slate-600 sm:flex-row">
+          <div className="market-container flex flex-col justify-between gap-4 py-6 text-[10px] text-slate-600 sm:flex-row sm:items-center">
             <p>© 2026 ApexiveAI Global Marketplace. All rights reserved.</p>
+            <Image
+              src="/copyright-bhone-htet-naing.png"
+              alt="Copyright Bhone Htet Naing — all rights reserved"
+              width={576}
+              height={384}
+              className="h-auto w-36"
+            />
             <p className="tracking-[0.15em]">
               BUILT FOR A WORLD WITHOUT LIMITS
             </p>

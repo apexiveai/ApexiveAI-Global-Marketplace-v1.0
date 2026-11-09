@@ -60,6 +60,7 @@ class User(AbstractUser):
         else:
             self.seller_status = self.SellerStatus.NOT_APPLICABLE
 
+        self.full_clean()
         super().save(*args, **kwargs)
 
     @property

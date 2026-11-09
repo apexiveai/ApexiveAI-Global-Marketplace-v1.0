@@ -7,6 +7,11 @@ from django.utils.text import slugify
 from rest_framework import serializers
 
 from apps.catalog.models import Product
+from apps.catalog.specification_serializers import (
+    JewelrySpecificationSerializer,
+    ProductImageSerializer,
+)
+from apps.media.models import VideoAsset
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -19,6 +24,13 @@ class ProductSerializer(serializers.ModelSerializer):
         source="category.name",
         read_only=True,
     )
+
+    images = ProductImageSerializer(many=True, read_only=True)
+    jewelry_specification = JewelrySpecificationSerializer(
+        read_only=True,
+        allow_null=True,
+    )
+    videos = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
@@ -33,6 +45,9 @@ class ProductSerializer(serializers.ModelSerializer):
             "title",
             "slug",
             "description",
+            "images",
+            "jewelry_specification",
+            "videos",
             "price",
             "currency",
             "stock_quantity",
@@ -44,6 +59,29 @@ class ProductSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
+
+    def get_videos(self, product):
+        request = self.context.get("request")
+        videos = []
+
+        for video in product.videos.all():
+            if video.status != VideoAsset.Status.APPROVED:
+                continue
+
+            url = video.external_url or (
+                video.video_file.url if video.video_file else ""
+            )
+            if request and url and not url.startswith(("http://", "https://")):
+                url = request.build_absolute_uri(url)
+
+            videos.append({
+                "id": str(video.id),
+                "url": url,
+                "duration_seconds": video.duration_seconds,
+                "is_primary": video.is_primary,
+            })
+
+        return videos
 
         read_only_fields = [
             "id",

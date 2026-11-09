@@ -1,9 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
+
+  // Allow local network development access
+  allowedDevOrigins: ["192.168.100.100"],
+
   turbopack: {
     rules: {
       "*.css": {
