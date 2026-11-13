@@ -2,26 +2,21 @@
 import environ
 from pathlib import Path
 from datetime import timedelta
+from django.core.exceptions import ImproperlyConfigured
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 env = environ.Env(
-    DEBUG=(bool, True),
+    DEBUG=(bool, False),
 )
 
 environ.Env.read_env(BASE_DIR / ".env")
 
-SECRET_KEY = env(
-    "SECRET_KEY",
-    default="development-only-change-this-secret-key",
-)
-
+SECRET_KEY = env("SECRET_KEY")
 DEBUG = env("DEBUG")
-
-ALLOWED_HOSTS = env.list(
-    "ALLOWED_HOSTS",
-    default=["localhost", "127.0.0.1"],
-)
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
+if not DEBUG and not ALLOWED_HOSTS:
+    raise ImproperlyConfigured("ALLOWED_HOSTS must be set when DEBUG is False.")
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -79,10 +74,12 @@ ASGI_APPLICATION = "config.asgi.application"
 
 AUTH_USER_MODEL = "accounts.User"
 
-DATABASE_URL = env(
-    "DATABASE_URL",
-    default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
-)
+DATABASE_URL = env("DATABASE_URL", default=None)
+if DATABASE_URL is None:
+    if DEBUG:
+        DATABASE_URL = f"sqlite:///{BASE_DIR / 'db.sqlite3'}"
+    else:
+        raise ImproperlyConfigured("DATABASE_URL must be set when DEBUG is False.")
 
 DATABASES = {
     "default": env.db_url_config(DATABASE_URL)
@@ -161,14 +158,22 @@ SPECTACULAR_SETTINGS = {
 
 CORS_ALLOWED_ORIGINS = env.list(
     "CORS_ALLOWED_ORIGINS",
-    default=["http://localhost:3000"],
+    default=["http://localhost:3000"] if DEBUG else [],
 )
+if not DEBUG and not CORS_ALLOWED_ORIGINS:
+    raise ImproperlyConfigured(
+        "CORS_ALLOWED_ORIGINS must be set when DEBUG is False."
+    )
+
+CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
+CORS_ALLOW_CREDENTIALS = True
 
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = True
 
 if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True

@@ -3,8 +3,10 @@
 __pycache__/
 *.py[cod]
 .env
+.env.*
+!.env.example
 db.sqlite3
-media/
+/media/
 staticfiles/
 .coverage
 .pytest_cache/
